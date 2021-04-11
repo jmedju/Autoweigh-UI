@@ -120,5 +120,9 @@ class Application(tk.Frame):
 
 root = tk.Tk()
 root.geometry("1100x800")
+robot = serial.Serial()
+robot.port = 'COM3'
+robot.baudrate = 9600
+robot.open()
 app = Application(master=root)
 app.mainloop()
