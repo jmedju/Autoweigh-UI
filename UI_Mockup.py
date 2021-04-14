@@ -3,6 +3,11 @@ import tkinter as tk
 import math
 import random
 
+robot = serial.Serial()
+robot.port = 'COM3'
+robot.baudrate = 9600
+robot.open()
+
 class Application(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
@@ -24,6 +29,8 @@ class Application(tk.Frame):
                 self.samples[x][y] = self.tray.create_oval((200 * math.floor(x/3)) + (55 * (x % 3)) + 5, 55 * y + 5, (200 * math.floor(x/3)) + (55 * (x % 3)) + 55, 55 * y + 55, fill = "gray")
                 self.sampletext[x][y] = self.tray.create_text((200 * math.floor(x/3)) + (55 * (x % 3)) + 30, 55 * y + 30, text = "0", justify = tk.CENTER, font = "Helvetica 16")
 
+
+
         self.run = tk.Button(self, font = self.buttonfont)
         self.run["text"] = "Run"
         self.run["command"] = self.run_button
@@ -43,12 +50,23 @@ class Application(tk.Frame):
         self.setup["command"] = self.setup_param
         self.setup.pack(side="left")
 
+        self.test = tk.Button(self, font = self.buttonfont)
+        self.test["text"] = "Test"
+        self.test["command"] = self.test_button
+        self.test.pack(side="left")
 
     def term_button(self):
         for x in range(15):
             for y in range(12):
                 self.tray.itemconfig(self.samples[x][y], fill = "gray")
                 self.tray.itemconfig(self.sampletext[x][y], text = "0")
+
+    def test_button(self):
+        cmd = bytes('n', 'utf-8')
+        robot.write(cmd)
+        s = robot.read()
+        self.tray.itemconfig(self.samples[0][0], fill = "green")
+        self.tray.itemconfig(self.sampletext[0][0], text = str(s))
 
     def setup_param(self):
         popup = tk.Tk();
@@ -118,11 +136,9 @@ class Application(tk.Frame):
                 self.tray.itemconfig(self.samples[x][y], fill = color)
                 self.tray.itemconfig(self.sampletext[x][y], text = str(weight))
 
+
 root = tk.Tk()
 root.geometry("1100x800")
-robot = serial.Serial()
-robot.port = 'COM3'
-robot.baudrate = 9600
-robot.open()
+
 app = Application(master=root)
 app.mainloop()
