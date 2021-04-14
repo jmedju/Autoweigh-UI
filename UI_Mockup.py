@@ -50,7 +50,7 @@ class Application(tk.Frame):
         self.setup["command"] = self.setup_param
         self.setup.pack(side="left")
 
-        self.test = tk.Button(self, font = self.buttonfont)
+        self.test = tk.Button(self, font = self.buttonfont) #The Test button writes a command to the Arduino, and reads back an output character
         self.test["text"] = "Test"
         self.test["command"] = self.test_button
         self.test.pack(side="left")
@@ -64,7 +64,7 @@ class Application(tk.Frame):
     def test_button(self):
         cmd = bytes('n', 'utf-8')
         robot.write(cmd)
-        s = robot.read()
+        s = robot.read() #currently, the output is not formatted correctly, but it does get the correct character.
         self.tray.itemconfig(self.samples[0][0], fill = "green")
         self.tray.itemconfig(self.sampletext[0][0], text = str(s))
 
