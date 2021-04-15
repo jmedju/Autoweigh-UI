@@ -3,20 +3,16 @@ import tkinter as tk
 import math
 import random
 import threading
+import time
 
 robot = serial.Serial()
-robot.port = 'COM3'
+robot.port = 'COM7'
 robot.baudrate = 9600
 robot.open()
 
 
 
-def robotSer():
-    cmd = bytes('n', 'utf-8')
-    robot.write(cmd)
-    s = robot.read()
-    if(s == 'N'):
-        app.write_to_sample(app, 0, 0)
+
 
 class Application(tk.Frame):
     def __init__(self, master=None):
@@ -72,8 +68,10 @@ class Application(tk.Frame):
                 self.tray.itemconfig(self.sampletext[x][y], text = "0")
 
     def test_button(self):
-        serthread = threading.Thread(target = robotSer)
-        serthread.start()
+        print(threading.active_count())
+        if(threading.active_count() <= 1):
+            serthread = threading.Thread(target = self.robotSer)
+            serthread.start()
 
     def write_to_sample(self, x, y):
         weight = round(random.gauss(50, 5), 2)
@@ -84,6 +82,28 @@ class Application(tk.Frame):
             color = "blue"
         self.tray.itemconfig(self.samples[x][y], fill = color)
         self.tray.itemconfig(self.sampletext[x][y], text = str(weight))
+
+    def robotSer(self):
+        x = 0
+        y = 0
+        while(True):
+            cmd = bytes('nn', 'utf-8')
+            robot.write(cmd)
+            time.sleep(1)
+            s = robot.read().decode('utf-8')
+            if(s == 'N'):
+                self.write_to_sample(x, y)
+                self.write_to_sample(x+3, y)
+                self.write_to_sample(x+6, y)
+                self.write_to_sample(x+9, y)
+                self.write_to_sample(x+12, y)
+                if(x >= 2):
+                    y = y+1
+                    x = 0
+                else:
+                    x = x+1
+                if(y >= 12):
+                    return
 
     def setup_param(self):
         popup = tk.Tk();
