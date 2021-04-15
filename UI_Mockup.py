@@ -2,6 +2,17 @@ import serial
 import tkinter as tk
 import math
 import random
+import threading
+import time
+
+robot = serial.Serial()
+robot.port = 'COM7'
+robot.baudrate = 9600
+robot.open()
+
+
+
+
 
 class Application(tk.Frame):
     def __init__(self, master=None):
@@ -16,13 +27,6 @@ class Application(tk.Frame):
         self.buttonfont = "Helvetica 24"
         self.buttonfontmain = "Helvetica 36"
 
-        self.samples = [[0 for x in range(12)] for x in range(15)]
-        self.sampletext = [[0 for x in range(12)] for x in range(15)]
-
-        for x in range(15):
-            for y in range(12):
-                self.samples[x][y] = self.tray.create_oval((200 * math.floor(x/3)) + (55 * (x % 3)) + 5, 55 * y + 5, (200 * math.floor(x/3)) + (55 * (x % 3)) + 55, 55 * y + 55, fill = "gray")
-                self.sampletext[x][y] = self.tray.create_text((200 * math.floor(x/3)) + (55 * (x % 3)) + 30, 55 * y + 30, text = "0", justify = tk.CENTER, font = "Helvetica 16")
 
         self.run = tk.Button(self, font = self.buttonfont)
         self.run["text"] = "Run"
@@ -43,12 +47,63 @@ class Application(tk.Frame):
         self.setup["command"] = self.setup_param
         self.setup.pack(side="left")
 
+        self.test = tk.Button(self, font = self.buttonfont)
+        self.test["text"] = "Test"
+        self.test["command"] = self.test_button
+        self.test.pack(side="left")
+
+        self.samples = [[0 for x in range(12)] for x in range(15)]
+        self.sampletext = [[0 for x in range(12)] for x in range(15)]
+
+        for x in range(15):
+            for y in range(12):
+                self.samples[x][y] = self.tray.create_oval((200 * math.floor(x/3)) + (55 * (x % 3)) + 5, 55 * y + 5, (200 * math.floor(x/3)) + (55 * (x % 3)) + 55, 55 * y + 55, fill = "gray")
+                self.sampletext[x][y] = self.tray.create_text((200 * math.floor(x/3)) + (55 * (x % 3)) + 30, 55 * y + 30, text = "0", justify = tk.CENTER, font = "Helvetica 16")
+
 
     def term_button(self):
         for x in range(15):
             for y in range(12):
                 self.tray.itemconfig(self.samples[x][y], fill = "gray")
                 self.tray.itemconfig(self.sampletext[x][y], text = "0")
+
+    def test_button(self):
+        print(threading.active_count())
+        if(threading.active_count() <= 1):
+            serthread = threading.Thread(target = self.robotSer)
+            serthread.start()
+
+    def write_to_sample(self, x, y):
+        weight = round(random.gauss(50, 5), 2)
+        color = "green"
+        if weight < 45:
+            color = "red"
+        elif weight > 55:
+            color = "blue"
+        self.tray.itemconfig(self.samples[x][y], fill = color)
+        self.tray.itemconfig(self.sampletext[x][y], text = str(weight))
+
+    def robotSer(self):
+        x = 0
+        y = 0
+        while(True):
+            cmd = bytes('nn', 'utf-8')
+            robot.write(cmd)
+            time.sleep(1)
+            s = robot.read().decode('utf-8')
+            if(s == 'N'):
+                self.write_to_sample(x, y)
+                self.write_to_sample(x+3, y)
+                self.write_to_sample(x+6, y)
+                self.write_to_sample(x+9, y)
+                self.write_to_sample(x+12, y)
+                if(x >= 2):
+                    y = y+1
+                    x = 0
+                else:
+                    x = x+1
+                if(y >= 12):
+                    return
 
     def setup_param(self):
         popup = tk.Tk();
@@ -120,9 +175,6 @@ class Application(tk.Frame):
 
 root = tk.Tk()
 root.geometry("1100x800")
-robot = serial.Serial()
-robot.port = 'COM3'
-robot.baudrate = 9600
-robot.open()
+
 app = Application(master=root)
 app.mainloop()
