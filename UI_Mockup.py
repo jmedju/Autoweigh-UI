@@ -9,7 +9,7 @@ robot.port = 'COM3'
 robot.baudrate = 9600
 robot.open()
 
-serthread = threading.Thread(target = robotSer, args = ())
+
 
 def robotSer():
     cmd = bytes('n', 'utf-8')
@@ -152,7 +152,7 @@ class Application(tk.Frame):
                 self.tray.itemconfig(self.samples[x][y], fill = color)
                 self.tray.itemconfig(self.sampletext[x][y], text = str(weight))
 
-
+serthread = threading.Thread(target = robotSer)
 root = tk.Tk()
 root.geometry("1100x800")
 
