@@ -2,6 +2,7 @@ import serial
 import tkinter as tk
 import math
 import random
+import threading
 
 robot = serial.Serial()
 robot.port = 'COM3'
@@ -20,15 +21,6 @@ class Application(tk.Frame):
         self.tray.pack()
         self.buttonfont = "Helvetica 24"
         self.buttonfontmain = "Helvetica 36"
-
-        self.samples = [[0 for x in range(12)] for x in range(15)]
-        self.sampletext = [[0 for x in range(12)] for x in range(15)]
-
-        for x in range(15):
-            for y in range(12):
-                self.samples[x][y] = self.tray.create_oval((200 * math.floor(x/3)) + (55 * (x % 3)) + 5, 55 * y + 5, (200 * math.floor(x/3)) + (55 * (x % 3)) + 55, 55 * y + 55, fill = "gray")
-                self.sampletext[x][y] = self.tray.create_text((200 * math.floor(x/3)) + (55 * (x % 3)) + 30, 55 * y + 30, text = "0", justify = tk.CENTER, font = "Helvetica 16")
-
 
 
         self.run = tk.Button(self, font = self.buttonfont)
@@ -50,10 +42,19 @@ class Application(tk.Frame):
         self.setup["command"] = self.setup_param
         self.setup.pack(side="left")
 
-        self.test = tk.Button(self, font = self.buttonfont) #The Test button writes a command to the Arduino, and reads back an output character
+        self.test = tk.Button(self, font = self.buttonfont)
         self.test["text"] = "Test"
         self.test["command"] = self.test_button
         self.test.pack(side="left")
+
+        self.samples = [[0 for x in range(12)] for x in range(15)]
+        self.sampletext = [[0 for x in range(12)] for x in range(15)]
+
+        for x in range(15):
+            for y in range(12):
+                self.samples[x][y] = self.tray.create_oval((200 * math.floor(x/3)) + (55 * (x % 3)) + 5, 55 * y + 5, (200 * math.floor(x/3)) + (55 * (x % 3)) + 55, 55 * y + 55, fill = "gray")
+                self.sampletext[x][y] = self.tray.create_text((200 * math.floor(x/3)) + (55 * (x % 3)) + 30, 55 * y + 30, text = "0", justify = tk.CENTER, font = "Helvetica 16")
+
 
     def term_button(self):
         for x in range(15):
@@ -64,9 +65,9 @@ class Application(tk.Frame):
     def test_button(self):
         cmd = bytes('n', 'utf-8')
         robot.write(cmd)
-        s = robot.read() #currently, the output is not formatted correctly, but it does get the correct character.
+        s = robot.read()
         self.tray.itemconfig(self.samples[0][0], fill = "green")
-        self.tray.itemconfig(self.sampletext[0][0], text = str(s))
+        self.tray.itemconfig(self.sampletext[0][0], text = s.decode('utf-8'))
 
     def setup_param(self):
         popup = tk.Tk();
