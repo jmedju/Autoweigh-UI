@@ -9,6 +9,15 @@ robot.port = 'COM3'
 robot.baudrate = 9600
 robot.open()
 
+serthread = threading.Thread(target = robotSer, args = ())
+
+def robotSer():
+    cmd = bytes('n', 'utf-8')
+    robot.write(cmd)
+    s = robot.read()
+    if(s == 'N'):
+        app.write_to_sample(app, 0, 0)
+
 class Application(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
@@ -63,11 +72,17 @@ class Application(tk.Frame):
                 self.tray.itemconfig(self.sampletext[x][y], text = "0")
 
     def test_button(self):
-        cmd = bytes('n', 'utf-8')
-        robot.write(cmd)
-        s = robot.read()
-        self.tray.itemconfig(self.samples[0][0], fill = "green")
-        self.tray.itemconfig(self.sampletext[0][0], text = s.decode('utf-8'))
+        serthread.start()
+
+    def write_to_sample(self, x, y):
+        weight = round(random.gauss(50, 5), 2)
+        color = "green"
+        if weight < 45:
+            color = "red"
+        elif weight > 55:
+            color = "blue"
+        self.tray.itemconfig(self.samples[x][y], fill = color)
+        self.tray.itemconfig(self.sampletext[x][y], text = str(weight))
 
     def setup_param(self):
         popup = tk.Tk();
