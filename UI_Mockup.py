@@ -72,6 +72,7 @@ class Application(tk.Frame):
                 self.tray.itemconfig(self.sampletext[x][y], text = "0")
 
     def test_button(self):
+        serthread = threading.Thread(target = robotSer)
         serthread.start()
 
     def write_to_sample(self, x, y):
@@ -152,7 +153,6 @@ class Application(tk.Frame):
                 self.tray.itemconfig(self.samples[x][y], fill = color)
                 self.tray.itemconfig(self.sampletext[x][y], text = str(weight))
 
-serthread = threading.Thread(target = robotSer)
 root = tk.Tk()
 root.geometry("1100x800")
 
