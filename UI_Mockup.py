@@ -10,16 +10,19 @@ robot.port = 'COM7'
 robot.baudrate = 9600
 robot.open()
 
-
-
+xposarray = [0, 1300, 3000]
+yposarray = [0, 1300, 2600, 3900, 5200, 6500, 7800, 9100, 10400, 11700, 13000, 14300]
 
 
 class Application(tk.Frame):
+
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
         self.pack()
         self.create_widgets()
+        self.pauseflag = False
+        self.termflag = False
 
     def create_widgets(self):
         self.tray = tk.Canvas(self, width = "1000", height = "700")
@@ -35,6 +38,7 @@ class Application(tk.Frame):
 
         self.pause = tk.Button(self, font = self.buttonfont)
         self.pause["text"] = "Pause"
+        self.pause["command"] = self.pause_button
         self.pause.pack(side="left")
 
         self.terminate = tk.Button(self, font = self.buttonfont)
@@ -62,13 +66,15 @@ class Application(tk.Frame):
 
 
     def term_button(self):
-        for x in range(15):
-            for y in range(12):
-                self.tray.itemconfig(self.samples[x][y], fill = "gray")
-                self.tray.itemconfig(self.sampletext[x][y], text = "0")
+        self.termflag = True
+
+    def pause_button(self):
+        if(self.pauseflag):
+            self.pauseflag = False
+        else:
+            self.pauseflag = True
 
     def test_button(self):
-        print(threading.active_count())
         if(threading.active_count() <= 1):
             serthread = threading.Thread(target = self.robotSer)
             serthread.start()
@@ -86,10 +92,67 @@ class Application(tk.Frame):
     def robotSer(self):
         x = 0
         y = 0
+        xpos = 0
+        ypos = 0
+        i = 0
+        cmd = bytes('rr', 'utf-8')
+        robot.write(cmd)
+
+        s = robot.read().decode('utf-8')
         while(True):
-            cmd = bytes('nn', 'utf-8')
+            while(self.pauseflag):
+                time.sleep(.5)
+                if(self.termflag):
+                    if(i > 2):
+                        cmd = bytes('hh', 'utf-8')
+                        robot.write(cmd)
+                    for x in range(15):
+                        for y in range(12):
+                            self.tray.itemconfig(self.samples[x][y], fill = "gray")
+                            self.tray.itemconfig(self.sampletext[x][y], text = "0")
+                    self.termflag = False
+                    self.pauseflag = False
+                    return
+            if(self.termflag):
+                if(i > 2):
+                    cmd = bytes('hh', 'utf-8')
+                    robot.write(cmd)
+                for x in range(15):
+                    for y in range(12):
+                        self.tray.itemconfig(self.samples[x][y], fill = "gray")
+                        self.tray.itemconfig(self.sampletext[x][y], text = "0")
+                self.termflag = False
+                return
+            cmdstring = 'hh'
+            xmove = xposarray[x] - xpos
+            ymove = yposarray[y] - ypos
+            if(i == 0 and xmove == 0):
+                i = 1
+
+            if(i == 1 and ymove == 0):
+                i = 2
+
+            if(i == 0):
+                if(xmove > 0):
+                    cmdstring = 'i' + '{0:05d}'.format(xmove)
+                else:
+                    xmove = -xmove
+                    cmdstring = 'k' + '{0:05d}'.format(xmove)
+                xpos = xposarray[x]
+            elif(i == 1):
+                if(ymove > 0):
+                    cmdstring = 'j' + '{0:05d}'.format(ymove)
+                else:
+                    ymove = -ymove
+                    cmdstring = 'l' + '{0:05d}'.format(ymove)
+                ypos = yposarray[y]
+            elif(i == 2):
+                cmdstring = 'yy'
+            elif(i == 3):
+                cmdstring = 'nn'
+            cmd = bytes(cmdstring, 'utf-8')
             robot.write(cmd)
-            time.sleep(1)
+
             s = robot.read().decode('utf-8')
             if(s == 'N'):
                 self.write_to_sample(x, y)
@@ -97,13 +160,24 @@ class Application(tk.Frame):
                 self.write_to_sample(x+6, y)
                 self.write_to_sample(x+9, y)
                 self.write_to_sample(x+12, y)
+                time.sleep(.5)
                 if(x >= 2):
                     y = y+1
                     x = 0
                 else:
                     x = x+1
                 if(y >= 12):
+                    cmd = bytes('hh', 'utf-8')
+                    robot.write(cmd)
+                    s = robot.read().decode('utf-8')
+                    cmd = bytes('rr', 'utf-8')
+                    robot.write(cmd)
                     return
+            while(s != 'D'):
+                s = robot.read().decode('utf-8')
+            i = i+1
+            if(i > 4):
+                i = 0
 
     def setup_param(self):
         popup = tk.Tk();
@@ -162,16 +236,9 @@ class Application(tk.Frame):
         popup.mainloop()
 
     def run_button(self):
-        for x in range(15):
-            for y in range(12):
-                weight = round(random.gauss(50, 5), 2)
-                color = "green"
-                if weight < 45:
-                    color = "red"
-                elif weight > 55:
-                    color = "blue"
-                self.tray.itemconfig(self.samples[x][y], fill = color)
-                self.tray.itemconfig(self.sampletext[x][y], text = str(weight))
+        if(threading.active_count() <= 1):
+            serthread = threading.Thread(target = self.robotSer)
+            serthread.start()
 
 root = tk.Tk()
 root.geometry("1100x800")
