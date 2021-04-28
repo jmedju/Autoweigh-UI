@@ -25,7 +25,7 @@ class Application(tk.Frame):
         self.termflag = False
 
     def create_widgets(self):
-        self.tray = tk.Canvas(self, width = "1000", height = "700")
+        self.tray = tk.Canvas(self, width = "1000", height = "900")
         self.tray.pack()
         self.buttonfont = "Helvetica 24"
         self.buttonfontmain = "Helvetica 36"
@@ -34,27 +34,32 @@ class Application(tk.Frame):
         self.run = tk.Button(self, font = self.buttonfont)
         self.run["text"] = "Run"
         self.run["command"] = self.run_button
-        self.run.pack(side="left")
+        self.run.place(x = 5, y = 700)
 
         self.pause = tk.Button(self, font = self.buttonfont)
         self.pause["text"] = "Pause"
         self.pause["command"] = self.pause_button
-        self.pause.pack(side="left")
+        self.pause.place(x = 105, y = 700)
 
         self.terminate = tk.Button(self, font = self.buttonfont)
         self.terminate["text"] = "Terminate"
         self.terminate["command"] = self.term_button
-        self.terminate.pack(side="left")
+        self.terminate.place(x = 235, y = 700)
 
-        self.terminate = tk.Button(self, font = self.buttonfont)
-        self.terminate["text"] = "Calibrate"
-        self.terminate["command"] = self.term_button
-        self.terminate.pack(side="left")
+        self.calibrate = tk.Button(self, font = self.buttonfont)
+        self.calibrate["text"] = "Calibrate"
+        self.calibrate["command"] = self.term_button
+        self.calibrate.place(x = 415, y = 700)
+
+        self.maintenance = tk.Button(self, font = self.buttonfont)
+        self.maintenance["text"] = "Maintenance"
+        self.maintenance["command"] = self.term_button
+        self.maintenance.place(x = 5, y = 800)
 
         self.setup = tk.Button(self, font = self.buttonfont)
         self.setup["text"] = "Setup Parameters"
         self.setup["command"] = self.setup_param
-        self.setup.pack(side="left")
+        self.setup.place(x = 230, y = 800)
 
         self.samples = [[0 for x in range(12)] for x in range(15)]
         self.sampletext = [[0 for x in range(12)] for x in range(15)]
@@ -237,7 +242,7 @@ class Application(tk.Frame):
             serthread.start()
 
 root = tk.Tk()
-root.geometry("1100x800")
+root.geometry("1100x900")
 
 app = Application(master=root)
 app.mainloop()
