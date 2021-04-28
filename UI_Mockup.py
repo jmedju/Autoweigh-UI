@@ -10,8 +10,8 @@ robot.port = 'COM7'
 robot.baudrate = 9600
 robot.open()
 
-xposarray = [0, 1300, 3000]
-yposarray = [0, 1300, 2600, 3900, 5200, 6500, 7800, 9100, 10400, 11700, 13000, 14300]
+xposarray = [0, 1270, 2600]
+yposarray = [0, 1440, 2880, 4390, 5900, 7410, 8920, 10430, 11920, 13470, 14980, 16590]
 
 
 class Application(tk.Frame):
@@ -46,15 +46,15 @@ class Application(tk.Frame):
         self.terminate["command"] = self.term_button
         self.terminate.pack(side="left")
 
+        self.terminate = tk.Button(self, font = self.buttonfont)
+        self.terminate["text"] = "Calibrate"
+        self.terminate["command"] = self.term_button
+        self.terminate.pack(side="left")
+
         self.setup = tk.Button(self, font = self.buttonfont)
         self.setup["text"] = "Setup Parameters"
         self.setup["command"] = self.setup_param
         self.setup.pack(side="left")
-
-        self.test = tk.Button(self, font = self.buttonfont)
-        self.test["text"] = "Test"
-        self.test["command"] = self.test_button
-        self.test.pack(side="left")
 
         self.samples = [[0 for x in range(12)] for x in range(15)]
         self.sampletext = [[0 for x in range(12)] for x in range(15)]
@@ -74,11 +74,6 @@ class Application(tk.Frame):
         else:
             self.pauseflag = True
 
-    def test_button(self):
-        if(threading.active_count() <= 1):
-            serthread = threading.Thread(target = self.robotSer)
-            serthread.start()
-
     def write_to_sample(self, x, y):
         weight = round(random.gauss(50, 5), 2)
         color = "green"
@@ -95,6 +90,7 @@ class Application(tk.Frame):
         xpos = 0
         ypos = 0
         i = 0
+        robot.reset_input_buffer()
         cmd = bytes('rr', 'utf-8')
         robot.write(cmd)
 
@@ -152,6 +148,7 @@ class Application(tk.Frame):
                 cmdstring = 'nn'
             cmd = bytes(cmdstring, 'utf-8')
             robot.write(cmd)
+            time.sleep(.5)
 
             s = robot.read().decode('utf-8')
             if(s == 'N'):
@@ -160,7 +157,6 @@ class Application(tk.Frame):
                 self.write_to_sample(x+6, y)
                 self.write_to_sample(x+9, y)
                 self.write_to_sample(x+12, y)
-                time.sleep(.5)
                 if(x >= 2):
                     y = y+1
                     x = 0
