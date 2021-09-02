@@ -117,9 +117,13 @@ class Application(tk.Frame):
         #First we create a text file with proper formatting to be written to.
         now = datetime.now() #Gets the date and time
         dt = now.strftime("%y_%m_%d Time_%Hh%Mm%Ss") #Formats dte and time for filename purposes
-        traytxt1 = "AA" #Temporary variable: should be replaced with traytxt from setup parameters
+        traytxt1 = "AA" #Initial tray of the run. Temporary variable: should be replaced with traytxt from setup parameters
         tray1 = traytxt1 #String that holds tray alphanumerics
-        cupnumber = 1 #Temporary variable: Should also be replaced with cupnumber from setup parameters
+        tray2 = "AB" #These trays are just examples. Each one should have its own corresponding traytxt(number) derived from the setup parameters
+        tray3 = "AC"
+        tray4 = "AD"
+        tray5 = "AE"
+        cupnumber = 1 #Initial cup of the run. Temporary variable: Should be replaced with cupnumber from setup parameters
         cup = '{0:05d}'.format(cupnumber) #Formats cup number properly
         filename = tray + cup + "_" + dt + ".txt" #collates the information into the proper file name
         file = open(r"./Data_Output/"+filename, "w") #Creates a file with the correct name
@@ -129,6 +133,9 @@ class Application(tk.Frame):
         file.write("\n")
         file.write("Sample, Weight \n")
         file.write("\n")
+
+
+        file.close()
 
 
 
