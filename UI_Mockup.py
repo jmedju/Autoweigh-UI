@@ -12,6 +12,7 @@ import random
 import threading
 import time
 import datetime
+from datetime import datetime
 #This code initializes the serial communication with the arduino
 #There are several phases to opening a serial port. I will describe each on their own line.
 #This code must be placed inside a function within the application for autonegotiation to work.
