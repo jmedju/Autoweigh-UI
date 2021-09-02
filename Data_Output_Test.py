@@ -22,12 +22,8 @@ traytxt = "AA"
 tray = traytxt #String that holds tray alphanumerics
 cupnumber = 1 #First cup
 cup = '{0:05d}'.format(cupnumber) #Formats cup number properly
-
-
 filename = tray + cup + "_" + dt + ".txt" #collates the information into the proper file name
-
-
-file = open(r"./Data_Testing/"+filename, "w")
+file = open(r"./Data_Testing/"+filename, "w") #Creates a file with the correct name
 
 file.write("***********************************\n")
 file.write("     Weight Data File\n")
