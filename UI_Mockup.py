@@ -113,6 +113,22 @@ class Application(tk.Frame):
         self.tray.itemconfig(self.samples[x][y], fill = color) #Write color to array.
         self.tray.itemconfig(self.sampletext[x][y], text = str(weight)) #Write weight to array.
 
+    def data_output(self):
+        #First we create a text file with proper formatting to be written to.
+        now = datetime.now() #Gets the date and time
+        dt = now.strftime("%y_%m_%d Time_%Hh%Mm%Ss") #Formats dte and time for filename purposes
+        traytxt = "AA" #Temporary variable: should be replaced with traytxt from setup parameters
+        tray = traytxt #String that holds tray alphanumerics
+        cupnumber = 1 #Temporary variable: Should also be replaced with cupnumber from setup parameters
+        cup = '{0:05d}'.format(cupnumber) #Formats cup number properly
+        filename = tray + cup + "_" + dt + ".txt" #collates the information into the proper file name
+        file = open(r"./Data_Output/"+filename, "w") #Creates a file with the correct name
+        file.write("***********************************\n") #This and the next few lines create the header for the text file
+        file.write("     Weight Data File\n")
+        file.write("***********************************\n")
+        file.write("\n")
+        file.write("Sample, Weight \n")
+        file.write("\n")
 
 
     #This function handles all robot communications.
@@ -291,15 +307,6 @@ class Application(tk.Frame):
 
     #when the run button is pressed it begins a thread that handles the robot serial function.
     def run_button(self):
-        now = datetime.now() #Gets the date and time
-        dt = now.strftime("%y_%m_%d Time_%Hh%Mm%Ss") #Formats dte and time for filename purposes
-
-        traytxt = "AA" #Temporary variable: should be replaced with traytxt from setup parameters
-        tray = traytxt #String that holds tray alphanumerics
-        cupnumber = 1 #Temporary variable: Should also be replaced with cupnumber from setup parameters
-        cup = '{0:05d}'.format(cupnumber) #Formats cup number properly
-        filename = tray + cup + "_" + dt + ".txt" #collates the information into the proper file name
-        file = open(r"./Data_Output/"+filename, "w") #Creates a file with the correct name
         if(threading.active_count() <= 1):
             serthread = threading.Thread(target = self.robotSer)
             serthread.start()
