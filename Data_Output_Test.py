@@ -13,15 +13,19 @@ sampletext = [[0 for x in range(12)] for x in range(15)] #12 by 15 matrix from t
 
 for x in range(15):
     for y in range(12):
-        sampletext[x][y] = round(random.gauss(50, 5), 2) #Fills matrix with random dummy data
+        sampletext[x][y] = str(round(random.gauss(50, 5), 2)) #Fills matrix with random dummy data
 
-now = datetime.now()
+now = datetime.now() #Gets the date and time
+dt = now.strftime("%y_%m_%d Time_%Hh%Mm%Ss") #Formats dte and time for filename purposes
 
-print(now)
-dt = now.strftime("%y_%m_%d Time_%Hh%Mm%Ss")
-
-print(dt)
-
+traytxt = "AA"
+tray = traytxt #String that holds tray alphanumerics
+startcupnumber = 12 #First cup
+cup = '{0:05d}'.format(startcupnumber) #Formats cup number properly
 
 print(sampletext[0][1])
-#filename =
+filename = tray + cup + "_" + dt + ".txt" #collates the information into the proper file name
+
+
+file2 = open(r"./Data_Testing/"+filename, "w") 
+print(filename)
