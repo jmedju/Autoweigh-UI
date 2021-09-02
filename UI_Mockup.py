@@ -125,15 +125,39 @@ class Application(tk.Frame):
         tray5 = "AE"
         cupnumber = 1 #Initial cup of the run. Temporary variable: Should be replaced with cupnumber from setup parameters
         cup = '{0:05d}'.format(cupnumber) #Formats cup number properly
-        filename = tray + cup + "_" + dt + ".txt" #collates the information into the proper file name
+        filename = tray1 + cup + "_" + dt + ".txt" #collates the information into the proper file name
         file = open(r"./Data_Output/"+filename, "w") #Creates a file with the correct name
         file.write("***********************************\n") #This and the next few lines create the header for the text file
-        file.write("     Weight Data File\n")
+        file.write("        Weight Data File\n")
         file.write("***********************************\n")
         file.write("\n")
-        file.write("Sample, Weight \n")
+        file.write("Sample, Weight\n")
         file.write("\n")
-
+        for x in range(3): #These for loops iterate over the sampletext matrix,
+            for y in range(12):
+                file.write(tray1 + cup + ",  " + sampletext[x][y] + "\n")
+                cupnumber = cupnumber + 1
+                cup = '{0:05d}'.format(cupnumber)
+        for x in range(3, 6):
+            for y in range(12):
+                file.write(tray2 + cup + ",  " + sampletext[x][y] + "\n")
+                cupnumber = cupnumber + 1
+                cup = '{0:05d}'.format(cupnumber)
+        for x in range (6, 9):
+            for y in range(12):
+                file.write(tray3 + cup + ",  " + sampletext[x][y] + "\n")
+                cupnumber = cupnumber + 1
+                cup = '{0:05d}'.format(cupnumber)
+        for x in range(9, 12):
+            for y in range(12):
+                file.write(tray4 + cup + ",  " + sampletext[x][y] + "\n")
+                cupnumber = cupnumber + 1
+                cup = '{0:05d}'.format(cupnumber)
+        for x in range (12, 15):
+            for y in range(12):
+                file.write(tray5 + cup + ",  " + sampletext[x][y] + "\n")
+                cupnumber = cupnumber + 1
+                cup = '{0:05d}'.format(cupnumber)
 
         file.close()
 
