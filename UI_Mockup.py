@@ -345,8 +345,6 @@ class Application(tk.Frame):
             serthread = threading.Thread(target = self.robotSer)
             serthread.start()
 
-#Matt's work here.
-#This is meant to be called after a run or early termination is completed in order to output collected data to a text file
 
 
 
