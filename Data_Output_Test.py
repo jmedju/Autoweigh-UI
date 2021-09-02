@@ -20,12 +20,26 @@ dt = now.strftime("%y_%m_%d Time_%Hh%Mm%Ss") #Formats dte and time for filename 
 
 traytxt = "AA"
 tray = traytxt #String that holds tray alphanumerics
-startcupnumber = 12 #First cup
-cup = '{0:05d}'.format(startcupnumber) #Formats cup number properly
+cupnumber = 1 #First cup
+cup = '{0:05d}'.format(cupnumber) #Formats cup number properly
 
-print(sampletext[0][1])
+
 filename = tray + cup + "_" + dt + ".txt" #collates the information into the proper file name
 
 
-file2 = open(r"./Data_Testing/"+filename, "w") 
-print(filename)
+file = open(r"./Data_Testing/"+filename, "w")
+
+file.write("***********************************\n")
+file.write("     Weight Data File\n")
+file.write("***********************************\n")
+file.write("\n")
+file.write("Sample, Weight \n")
+file.write("\n")
+
+for x in range(15):
+    for y in range(12):
+        file.write(tray + cup + ",  " + sampletext[x][y] + "\n")
+        cupnumber = cupnumber + 1
+        cup = '{0:05d}'.format(cupnumber)
+
+file.close()
