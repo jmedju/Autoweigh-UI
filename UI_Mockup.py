@@ -113,6 +113,8 @@ class Application(tk.Frame):
         self.tray.itemconfig(self.samples[x][y], fill = color) #Write color to array.
         self.tray.itemconfig(self.sampletext[x][y], text = str(weight)) #Write weight to array.
 
+
+
     #This function handles all robot communications.
     #It's a bit complex at the moment. There are several parts.
     #This function consists of a state machine which sends commands to the robot.
@@ -132,6 +134,8 @@ class Application(tk.Frame):
         robot.write(cmd) #Write to serial buffer.
 
         s = robot.read().decode('utf-8') #wait until robot makes a reply, basically. 'D' is our ACK character.
+
+
         #This loops until we either terminate the run or the run finishes. I use 'return' to exit the loop.
         while(True):
             while(self.pauseflag): #While loop that basically holds the program while it is paused.
@@ -222,6 +226,9 @@ class Application(tk.Frame):
             if(i > 4): #go back to the first state if we reached last state.
                 i = 0
 
+
+
+
     #This sets up the popup GUI for setup parameters.
     def setup_param(self):
         popup = tk.Tk(); #since this is a separate GUI it needs a separate tk instance.
@@ -284,13 +291,22 @@ class Application(tk.Frame):
 
     #when the run button is pressed it begins a thread that handles the robot serial function.
     def run_button(self):
+        now = datetime.now() #Gets the date and time
+        dt = now.strftime("%y_%m_%d Time_%Hh%Mm%Ss") #Formats dte and time for filename purposes
+
+        traytxt = "AA" #Temporary variable: should be replaced with traytxt from setup parameters
+        tray = traytxt #String that holds tray alphanumerics
+        cupnumber = 1 #Temporary variable: Should also be replaced with cupnumber from setup parameters
+        cup = '{0:05d}'.format(cupnumber) #Formats cup number properly
+        filename = tray + cup + "_" + dt + ".txt" #collates the information into the proper file name
+        file = open(r"./Data_Output/"+filename, "w") #Creates a file with the correct name
         if(threading.active_count() <= 1):
             serthread = threading.Thread(target = self.robotSer)
             serthread.start()
 
 #Matt's work here.
 #This is meant to be called after a run or early termination is completed in order to output collected data to a text file
-    def data_output(self):
+
 
 
 #All the fun stuff for setting up the application GUI.
