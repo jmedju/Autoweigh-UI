@@ -126,7 +126,7 @@ class Application(tk.Frame):
         cupnumber = 1 #Initial cup of the run. Temporary variable: Should be replaced with cupnumber from setup parameters
         cup = '{0:05d}'.format(cupnumber) #Formats cup number properly
         filename = tray1 + cup + "_" + dt + ".txt" #collates the information into the proper file name
-        file = open(r"./Data_Output/"+filename, "w") #Creates a file with the correct name
+        file = open(r"./Data_Testing/"+filename, "w") #Creates a file with the correct name
         file.write("***********************************\n") #This and the next few lines create the header for the text file
         file.write("        Weight Data File\n")
         file.write("***********************************\n")
