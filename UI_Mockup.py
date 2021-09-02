@@ -117,8 +117,8 @@ class Application(tk.Frame):
         #First we create a text file with proper formatting to be written to.
         now = datetime.now() #Gets the date and time
         dt = now.strftime("%y_%m_%d Time_%Hh%Mm%Ss") #Formats dte and time for filename purposes
-        traytxt = "AA" #Temporary variable: should be replaced with traytxt from setup parameters
-        tray = traytxt #String that holds tray alphanumerics
+        traytxt1 = "AA" #Temporary variable: should be replaced with traytxt from setup parameters
+        tray1 = traytxt1 #String that holds tray alphanumerics
         cupnumber = 1 #Temporary variable: Should also be replaced with cupnumber from setup parameters
         cup = '{0:05d}'.format(cupnumber) #Formats cup number properly
         filename = tray + cup + "_" + dt + ".txt" #collates the information into the proper file name
@@ -129,6 +129,8 @@ class Application(tk.Frame):
         file.write("\n")
         file.write("Sample, Weight \n")
         file.write("\n")
+
+
 
 
     #This function handles all robot communications.
@@ -242,6 +244,7 @@ class Application(tk.Frame):
             if(i > 4): #go back to the first state if we reached last state.
                 i = 0
 
+        self.data_output()
 
 
 
