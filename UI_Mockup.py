@@ -286,6 +286,11 @@ class Application(tk.Frame):
             serthread = threading.Thread(target = self.robotSer)
             serthread.start()
 
+#Matt's work here.
+#This is meant to be called after a run or early termination is completed in order to output collected data to a text file
+    def data_output(self):
+
+
 #All the fun stuff for setting up the application GUI.
 root = tk.Tk()
 root.geometry("1100x900")
