@@ -135,27 +135,27 @@ class Application(tk.Frame):
         file.write("\n")
         for x in range(3): #These for loops iterate over the sampletext matrix,
             for y in range(12):
-                file.write(tray1 + cup + ",  " + sampletext[x][y] + "\n")
+                file.write(tray1 + cup + ",  " + self.sampletext[x][y] + "\n")
                 cupnumber = cupnumber + 1
                 cup = '{0:05d}'.format(cupnumber)
         for x in range(3, 6):
             for y in range(12):
-                file.write(tray2 + cup + ",  " + sampletext[x][y] + "\n")
+                file.write(tray2 + cup + ",  " + self.sampletext[x][y] + "\n")
                 cupnumber = cupnumber + 1
                 cup = '{0:05d}'.format(cupnumber)
         for x in range (6, 9):
             for y in range(12):
-                file.write(tray3 + cup + ",  " + sampletext[x][y] + "\n")
+                file.write(tray3 + cup + ",  " + self.sampletext[x][y] + "\n")
                 cupnumber = cupnumber + 1
                 cup = '{0:05d}'.format(cupnumber)
         for x in range(9, 12):
             for y in range(12):
-                file.write(tray4 + cup + ",  " + sampletext[x][y] + "\n")
+                file.write(tray4 + cup + ",  " + self.sampletext[x][y] + "\n")
                 cupnumber = cupnumber + 1
                 cup = '{0:05d}'.format(cupnumber)
         for x in range (12, 15):
             for y in range(12):
-                file.write(tray5 + cup + ",  " + sampletext[x][y] + "\n")
+                file.write(tray5 + cup + ",  " + self.sampletext[x][y] + "\n")
                 cupnumber = cupnumber + 1
                 cup = '{0:05d}'.format(cupnumber)
 
