@@ -232,7 +232,7 @@ class Application(tk.Frame):
                 if(xmove > 0):
                     cmdstring = 'i' + '{0:05d}'.format(xmove) #standard move commaand is 5 digits but can be made smaller by putting a letter at the end like 'i123h'
                 else:
-                    xmove = -xmove
+                    xmove = -xmove #We need to make sure all the movement values are positive, this makes the xmove positive.
                     cmdstring = 'k' + '{0:05d}'.format(xmove)
                 xpos = xposarray[x] #after we make a move command we update the robot position *in the app* to reflect where we expect it to go.
             elif(i == 1): #same as x but for the y axis.
