@@ -13,13 +13,10 @@ import threading
 import time
 import datetime
 from datetime import datetime
+from serial.tools import list_ports
 #This code initializes the serial communication with the arduino
 #There are several phases to opening a serial port. I will describe each on their own line.
-#This code must be placed inside a function within the application for autonegotiation to work.
 robot = serial.Serial() #this creates the serial object "robot" used in the rest of the app.
-robot.port = 'COM7' #sets port number. For autoneg this cannot be a constant like it is here.
-robot.baudrate = 9600 #sets baud rate. This can be a constant.
-robot.open() #opens the serial port. This function only opens if the port is valid and not in use.
 
 #These are the X and Y positions for all 36 cups in the robot.
 #These arrays are dvided into separate X and Y arrays to take up less space.
@@ -30,6 +27,26 @@ yposarray = [0, 1440, 2880, 4390, 5900, 7410, 8920, 10430, 11920, 13470, 14980, 
 #All your code should be placed inside this class.
 class Application(tk.Frame):
 
+    def autoneg(self): #autonegotiation function. This is always running while the GUI is. It connects to the robot serial port.
+        while(True):
+            listports = serial.tools.list_ports.comports() #lists all COM ports on the computer.
+            self.arduinoflag = False
+            for it in listports:
+                descstring = str(it.description) #convert to a string
+                if("Arduino" in descstring): #looks for Arduino to connect to.
+                    self.arduinoflag = True
+                    if(not robot.isOpen() and self.disconnected): #attempt to connect or reconnect
+                        robot.port = it.device #sets port number to Arduino's port.
+                        robot.baudrate = 9600 #sets baud rate. This can be a constant.
+                        robot.open() #opens the serial port. This function only opens if the port is valid and not in use.
+                        self.disconnected = False
+                        self.connect.configure(text = "Connected", bg = "green")
+            if(not self.arduinoflag): #device was disconnected, update status.
+                robot.close()
+                self.disconnected = True
+                self.connect.configure(text = "Disconnected", bg = "red")
+            time.sleep(1)
+
     def __init__(self, master=None): #Initializes the main GUI
         super().__init__(master)
         self.master = master
@@ -37,6 +54,7 @@ class Application(tk.Frame):
         self.create_widgets()
         self.pauseflag = False #These are two flag variables I use to handle the program state.
         self.termflag = False #Currently the 3 states are normal, paused, and terminate run.
+        self.disconnected = True #this variable determines if the robot is connected or not. This is so we are safe from communication errors.
 
     def create_widgets(self): #Creates all the buttons and Visual stuff.
         #GUI size and fonts
@@ -66,6 +84,11 @@ class Application(tk.Frame):
         self.calibrate["command"] = self.term_button
         self.calibrate.place(x = 415, y = 700)
 
+        self.connect = tk.Button(self, font = self.buttonfont)
+        self.connect["text"] = "Disconnected"
+        self.connect["bg"] = "red"
+        self.connect.place(x = 645, y = 700)
+
         self.maintenance = tk.Button(self, font = self.buttonfont)
         self.maintenance["text"] = "Maintenance"
         self.maintenance["command"] = self.term_button
@@ -88,6 +111,9 @@ class Application(tk.Frame):
             for y in range(12):
                 self.samples[x][y] = self.tray.create_oval((200 * math.floor(x/3)) + (55 * (x % 3)) + 5, 55 * y + 5, (200 * math.floor(x/3)) + (55 * (x % 3)) + 55, 55 * y + 55, fill = "gray")
                 self.sampletext[x][y] = self.tray.create_text((200 * math.floor(x/3)) + (55 * (x % 3)) + 30, 55 * y + 30, text = "0", justify = tk.CENTER, font = "Helvetica 16")
+
+        autoneg = threading.Thread(target = self.autoneg)
+        autoneg.start()
 
     #The termination button sets the GUI into termination state.
     def term_button(self):
@@ -341,7 +367,7 @@ class Application(tk.Frame):
 
     #when the run button is pressed it begins a thread that handles the robot serial function.
     def run_button(self):
-        if(threading.active_count() <= 1):
+        if((threading.active_count() <= 2) and not self.disconnected):
             serthread = threading.Thread(target = self.robotSer)
             serthread.start()
 
