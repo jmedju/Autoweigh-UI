@@ -57,10 +57,23 @@ with serial.Serial() as robot: #this creates the serial object "robot" used in t
             self.master = master
             self.pack() #I use pack on the main GUI, may change to another packing method.
             self.create_widgets()
+            #similar to global variables
+            self.setentry1='36'
+            self.setentry2='36'
+            self.setentry3='36'
+            self.setentry4='36'
+            self.setentry5='36'
+            self.setcheck1= 0
+            self.setcheck2= 0
+            self.setcheck3= 0
+            self.setcheck4= 0
+            self.setcheck5= 0
             self.pauseflag = False #These are two flag variables I use to handle the program state.
             self.termflag = False #Currently the 3 states are normal, paused, and terminate run.
             self.disconnected = True #this variable determines if the robot is connected or not. This is so we are safe from communication errors.
             self.master.protocol("WM_DELETE_WINDOW", self.quit)
+            
+           
 
         def create_widgets(self): #Creates all the buttons and Visual stuff.
             self.killThreads = False
@@ -345,37 +358,37 @@ with serial.Serial() as robot: #this creates the serial object "robot" used in t
             #setup all the entry forms and radio buttons for the number of trays and number of cups per tray.
             popup.traylabel1 = tk.Label(popup,  text='Select Tray Numbering:', font = self.buttonfont)
             popup.traylabel1.grid(column=0, row=1)
-            popup.tray1 = tk.Entry(popup, font = self.buttonfont)
+            popup.tray1 = tk.Entry(popup, font = self.buttonfont, textvariable = self.setentry1)
             popup.tray1.grid(column=1, row=1)
-            popup.checktray1 = tk.Checkbutton(popup)
+            popup.checktray1 = tk.Checkbutton(popup, variable= self.setcheck1)
             popup.checktray1.grid(column=2, row=1)
 
             popup.traylabel2 = tk.Label(popup,  text='Select Tray Numbering:', font = self.buttonfont)
             popup.traylabel2.grid(column=0, row=2)
-            popup.tray2 = tk.Entry(popup, font = self.buttonfont)
+            popup.tray2 = tk.Entry(popup, font = self.buttonfont,textvariable = self.setentry2)
             popup.tray2.grid(column=1, row=2)
-            popup.checktray2 = tk.Checkbutton(popup)
+            popup.checktray2 = tk.Checkbutton(popup, variable= self.setcheck2)
             popup.checktray2.grid(column=2, row=2)
 
             popup.traylabel3 = tk.Label(popup,  text='Select Tray Numbering:', font = self.buttonfont)
             popup.traylabel3.grid(column=0, row=3)
-            popup.tray3 = tk.Entry(popup, font = self.buttonfont)
+            popup.tray3 = tk.Entry(popup, font = self.buttonfont, textvariable = self.setentry3)
             popup.tray3.grid(column=1, row=3)
-            popup.checktray3 = tk.Checkbutton(popup)
+            popup.checktray3 = tk.Checkbutton(popup, variable= self.setcheck3)
             popup.checktray3.grid(column=2, row=3)
 
             popup.traylabel4 = tk.Label(popup,  text='Select Tray Numbering:', font = self.buttonfont)
             popup.traylabel4.grid(column=0, row=4)
-            popup.tray4 = tk.Entry(popup, font = self.buttonfont)
+            popup.tray4 = tk.Entry(popup, font = self.buttonfont, textvariable = self.setentry4)
             popup.tray4.grid(column=1, row=4)
-            popup.checktray4 = tk.Checkbutton(popup)
+            popup.checktray4 = tk.Checkbutton(popup, variable= self.setcheck4)
             popup.checktray4.grid(column=2, row=4)
 
             popup.traylabel5 = tk.Label(popup,  text='Select Tray Numbering:', font = self.buttonfont)
             popup.traylabel5.grid(column=0, row=5)
-            popup.tray5 = tk.Entry(popup, font = self.buttonfont)
+            popup.tray5 = tk.Entry(popup, font = self.buttonfont, textvariable = self.setentry5)
             popup.tray5.grid(column=1, row=5)
-            popup.checktray5 = tk.Checkbutton(popup)
+            popup.checktray5 = tk.Checkbutton(popup, variable= self.setcheck5)
             popup.checktray5.grid(column=2, row=5)
 
             #apply setup parameters.
